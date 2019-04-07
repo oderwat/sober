@@ -1,10 +1,18 @@
 module Brewer.Internal where
 
 import           Data.Char       (isSpace)
-import           Data.List       (dropWhile, dropWhileEnd, isPrefixOf)
+import           Data.List       (dropWhile, dropWhileEnd, isPrefixOf, elemIndex)
 import           Data.List.Split (splitOn)
 
 trim = dropWhileEnd isSpace . dropWhile isSpace
+
+splitAtFirstSpace :: String -> Maybe (String, String)
+splitAtFirstSpace str =
+   case elemIndex ' ' cleaned of
+    Nothing -> Nothing
+    Just i -> Just (trim $ take i cleaned, trim $ drop (i+1) cleaned)
+   where
+    cleaned = dropWhile isSpace str
 
 splitColon :: String -> [String]
 splitColon = splitOn ": "

@@ -2,7 +2,7 @@ module Main where
 
 import           Control.Concurrent
 
-import           Brewer                         ( getPackageNames
+import           Brewer                         ( getPackageList
                                                 , packageInfo
                                                 )
 
@@ -13,7 +13,7 @@ fShow func name = do
 
 main :: IO ()
 main = do
-  packageNames <- fmap (take 3) getPackageNames
-  putStrLn $ "Having " ++ show (length packageNames) ++ " packages"
-  alle <- mapM (fShow packageInfo) packageNames
+  packageList <- fmap (take 3) getPackageList
+  putStrLn $ "Having " ++ show (length packageList) ++ " packages"
+  alle <- mapM (fShow packageInfo . fst) packageList
   mapM_ print alle

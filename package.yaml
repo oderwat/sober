@@ -24,6 +24,9 @@ dependencies:
 - process >= 1.6.3 && < 2.0
 - split >= 0.2.3 && < 1.0
 - network-uri >= 2.6.1 && < 3.0
+- hspec
+- text
+- QuickCheck
 
 library:
   source-dirs: src

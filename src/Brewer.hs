@@ -1,9 +1,11 @@
 module Brewer
-  ( getPackageNames
+  ( getPackageList
   , packageInfo
   , doBrewCmd
   ) where
 
+import           Control.Applicative
+import           Data.Maybe
 import           Network.URI     (URI, parseURI)
 import           System.Exit     (ExitCode (ExitSuccess))
 import           System.Process  (readProcessWithExitCode)
@@ -30,8 +32,10 @@ doBrewCmd args = do
       ExitSuccess -> lines cmdout
       _           -> []
 
-getPackageNames :: IO [String]
-getPackageNames = doBrewCmd ["list", "-1"]
+getPackageList :: IO [(String,String)]
+getPackageList = do
+    all <- doBrewCmd ["list", "-1","--versions"]
+    pure $ mapMaybe splitAtFirstSpace all
 
 packageInfo :: String -> IO Package
 packageInfo package = do
