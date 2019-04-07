@@ -1,3 +1,8 @@
+{-# LANGUAGE OverloadedStrings #-}
+
+import qualified Data.Text as T
+import Data.Text (Text(..))
+
 import Test.Hspec
 import Test.QuickCheck
 import Control.Exception (evaluate)

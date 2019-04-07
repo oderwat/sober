@@ -1,14 +1,18 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main where
 
-import           Control.Concurrent
+import           Data.Text    (Text (..))
+import qualified Data.Text    as T
+import qualified Data.Text.IO as T
 
 import           Brewer                         ( getPackageList
                                                 , packageInfo
                                                 )
 
-fShow :: (String -> IO d) -> String -> IO d
+fShow :: (Text -> IO d) -> Text -> IO d
 fShow func name = do
-  putStrLn name
+  T.putStrLn name
   func name
 
 main :: IO ()

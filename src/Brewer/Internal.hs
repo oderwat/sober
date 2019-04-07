@@ -1,26 +1,29 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Brewer.Internal where
 
 import           Data.Char       (isSpace)
 import           Data.List       (dropWhile, dropWhileEnd, isPrefixOf, elemIndex)
 import           Data.List.Split (splitOn)
+import           Data.Text       (Text (..))
+import qualified Data.Text       as T
 
-trim = dropWhileEnd isSpace . dropWhile isSpace
-
-splitAtFirstSpace :: String -> Maybe (String, String)
+splitAtFirstSpace :: Text -> Maybe (Text, Text)
 splitAtFirstSpace str =
-   case elemIndex ' ' cleaned of
+  case T.findIndex isSpace cleaned of
     Nothing -> Nothing
-    Just i -> Just (trim $ take i cleaned, trim $ drop (i+1) cleaned)
-   where
-    cleaned = dropWhile isSpace str
+    Just i -> Just (T.strip $ T.take i cleaned, T.strip $ T.drop (i + 1) cleaned)
+  where
+    cleaned = T.dropWhile isSpace str
 
-splitColon :: String -> [String]
-splitColon = splitOn ": "
+splitColon :: Text -> [Text]
+splitColon = T.splitOn ": "
 
-findAndSplit :: String -> [String] -> [String]
+findAndSplit :: Text -> [Text] -> [Text]
 findAndSplit find entries
   | null entries = []
   | null found = []
-  | otherwise = map trim $ splitOn ", " $ drop (length find) (head found)
+  | otherwise = map T.strip $ T.splitOn ", " $ T.drop (T.length find) (head found)
   where
-    found = filter (isPrefixOf find) entries
+    found :: [Text]
+    found = filter (T.isPrefixOf find) entries
