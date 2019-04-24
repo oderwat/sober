@@ -22,7 +22,7 @@ import           Brewer                         ( getPackageList
                                                 , Package(..)
                                                 )
 --import Debug.Trace (trace)
---trace _ x = x
+trace _ x = x
 
 fShow :: (Text -> Text -> IO d) -> Text -> Text -> IO d
 fShow func name ver = do
@@ -31,31 +31,29 @@ fShow func name ver = do
 
 workPackage :: Text -> Text -> IO Package
 workPackage srch ver = do
-  p <- getResource defaultPackage { pkgName = srch }
+  p <- getResource defaultPackage { name = srch }
   case p of
     Nothing -> do
       pkg' <- packageInfo srch
-      -- update package info with data from list
-      -- because they can actually differ
-      let pkg = pkg' { pkgVersion = ver, pkgName = srch }
-      print $ "New: " <> pkgName pkg <> " " <> pkgVersion pkg
+      let pkg = pkg' { version = ver }
+      print $ "New: " <> name pkg <> " " <> version pkg
       withResource pkg $ const pkg
       return pkg
     Just pkg ->
-      if pkgVersion pkg /= ver
+      if version pkg /= ver
         then do
           pkg' <- packageInfo srch
-          let pkg = pkg' { pkgVersion = ver }
-          print $ "Upd: " <> pkgName pkg <> " " <> pkgVersion pkg
+          let pkg = pkg' { version = ver }
+          print $ "Upd: " <> name pkg <> " " <> version pkg
           withResource pkg $ const pkg
           return pkg
         else do
-          print $ "Old: " <> pkgName pkg <> " " <> pkgVersion pkg
+          print $ "Old: " <> name pkg <> " " <> version pkg
           return pkg
 
 main :: IO ()
 main = do
-  index pkgVersion
+  index version
   packageList <- fmap (take 20) getPackageList
   putStrLn $ "Having " ++ show (length packageList) ++ " packages"
 
@@ -64,10 +62,7 @@ main = do
   syncCache
   --mapM_ print alle
 
-  r <- atomically $ pkgVersion .==. ("3.3.2" :: Text)
-  print r
-
-  r <- atomically $ pkgName .==. ("Ant" :: Text)
+  r <- atomically $ version .==. ("3.3.2" :: Text)
   print r
 
   threadDelay 1000000

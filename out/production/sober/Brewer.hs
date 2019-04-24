@@ -30,22 +30,22 @@ import Brewer.Internal
 brewBin = "/usr/local/bin/brew"
 
 data Package = Package
-  { pkgName :: Text
-  , pkgVersion :: Text
-  , pkgDescription :: Text
-  , pkgLink :: Text --Maybe URI
-  , pkgBuild :: [Text]
-  , pkgRequired :: [Text]
+  { name :: Text
+  , version :: Text
+  , description :: Text
+  , link :: Text --Maybe URI
+  , build :: [Text]
+  , required :: [Text]
   } deriving (Read, Show, Typeable)
 
 defaultPackage =
   Package
-    { pkgName = undefined
-    , pkgVersion = undefined
-    , pkgDescription = undefined
-    , pkgLink = undefined
-    , pkgBuild = undefined
-    , pkgRequired = undefined
+    { name = undefined
+    , version = undefined
+    , description = undefined
+    , link = undefined
+    , build = undefined
+    , required = undefined
     }
 
 {--
@@ -56,7 +56,7 @@ instance Read URI where
 -}
 
 instance Indexable Package where
-  key Package { pkgName = id } = "Packages/" <> T.unpack (T.replace "/" "#" id)
+  key Package {name = id} = "Packages/" <> T.unpack (T.replace "/" "#" id)
 
 instance Serializable Package where
   serialize = pack . show
@@ -83,9 +83,9 @@ getPackageList = do
 packageInfo :: Text -> IO Package
 packageInfo package = do
   entries <- doBrewCmd ["info", package]
-  let (first:desc:url:others) = entries
-  let [name, version] = splitColon first
-  let build = findAndSplit "Build: " others
+  let (first:desc':url:others) = entries
+  let [name', version'] = splitColon first
+  let build' = findAndSplit "Build: " others
   let reqlist = findAndSplit "Required: " others
   return $
-    Package {pkgName = name, pkgVersion = version, pkgDescription = desc, pkgLink = url, pkgBuild = build, pkgRequired = reqlist}
+    Package {name = name', version = version', description = desc', link = url, build = build', required = reqlist}
